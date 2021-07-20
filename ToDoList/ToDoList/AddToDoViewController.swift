@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class AddToDoViewController: UIViewController {
     
@@ -22,7 +23,27 @@ class AddToDoViewController: UIViewController {
     }
     
     @IBAction func addTapped(_ sender: UIButton) {
-        let newToDo = ToDoClass()
+       
+        guard let accessToCoreData = UIApplication.shared.delegate as? AppDelegate else {
+             return
+             }
+        
+        let dataFromCoreData = accessToCoreData.persistentContainer.viewContext
+
+   //this line creates an empty object that is the same data type as the ToDoCD entry within Core Data.  This means this object will have all the properties of ToDoCD.
+        let newToDo = ToDoCD(context : dataFromCoreData)
+
+   //these lines give the object information from the user input
+        newToDo.descriptionInCD = descriptionInput.text
+        newToDo.importantInCD = switchInput.isOn
+
+   //This is like clicking "save"! Our new object is now safe in Core Data!
+        accessToCoreData.saveContext()
+
+   //this send the user back to the Table View Controller
+        navigationController?.popViewController(animated: true)
+
+       /* let newToDo = ToDoClass()
         
         if let checkForInput = descriptionInput.text {
             newToDo.description = checkForInput
@@ -32,7 +53,8 @@ class AddToDoViewController: UIViewController {
         previousToDoTVC.tableView.reloadData()
         navigationController?.popViewController(animated: true)
         }
-
+*/
+        
     
     /*
     // MARK: - Navigation
@@ -44,4 +66,5 @@ class AddToDoViewController: UIViewController {
     }
     */
 
+}
 }
